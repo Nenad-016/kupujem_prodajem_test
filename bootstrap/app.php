@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Middleware\RoleMiddleware;
+use App\Repositories\Contracts\AdRepositoryInterface;
+use App\Repositories\Contracts\CategoryRepositoryInterface;
+use App\Repositories\Eloquent\EloquentAdRepository;
+use App\Repositories\Eloquent\EloquentCategoryRepository;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,4 +22,9 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->withSingletons([
+        AdRepositoryInterface::class => EloquentAdRepository::class,
+        CategoryRepositoryInterface::class => EloquentCategoryRepository::class,
+    ])
+    ->create();

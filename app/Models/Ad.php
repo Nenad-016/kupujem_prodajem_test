@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\AdCondition;
+use App\Enums\AdStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -24,6 +25,7 @@ class Ad extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'condition' => AdCondition::class,
+        'status' => AdStatus::class,
     ];
 
     public function category(): BelongsTo

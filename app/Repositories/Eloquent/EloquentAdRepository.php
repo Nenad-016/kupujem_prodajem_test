@@ -3,8 +3,8 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\Ad;
-use App\Models\Category;
 use App\Models\User;
+use App\Models\Category;
 use App\Repositories\Contracts\AdRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
@@ -16,15 +16,17 @@ class EloquentAdRepository extends BaseRepository implements AdRepositoryInterfa
         parent::__construct($model);
     }
 
+   
     public function getPublicAdsPaginated(int $perPage = 15): LengthAwarePaginator
     {
         return $this->model
             ->newQuery()
-            ->where('status', 'acitve')
+            ->where('status', 'active') 
             ->orderByDesc('created_at')
             ->paginate($perPage);
     }
 
+ 
     public function getAdsByUser(User $user, int $perPage = 15): LengthAwarePaginator
     {
         return $user->ads()
@@ -32,20 +34,22 @@ class EloquentAdRepository extends BaseRepository implements AdRepositoryInterfa
             ->paginate($perPage);
     }
 
+  
     public function getAdsByCategory(Category $category, int $perPage = 15): LengthAwarePaginator
     {
         return $category->ads()
-            ->where('status', 'acitve')
+            ->where('status', 'active')
             ->orderByDesc('created_at')
             ->paginate($perPage);
     }
 
+    
     public function findPublicById(int $id): ?Model
     {
         return $this->model
             ->newQuery()
             ->where('id', $id)
-            ->where('status', 'acitve')
+            ->where('status', 'active')
             ->first();
     }
 }

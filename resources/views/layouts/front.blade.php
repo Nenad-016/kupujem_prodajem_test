@@ -9,8 +9,6 @@
     {{-- Tailwind CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
 
-    {{-- (opciono) tvoj dodatni CSS ako imaš nešto custom u public/css/app.css --}}
-    {{-- <link rel="stylesheet" href="{{ asset('css/app.css') }}"> --}}
 </head>
 <body class="min-h-screen bg-slate-100 text-slate-900">
 
@@ -70,7 +68,6 @@
         </div>
     </header>
 
-    {{-- GLAVNI LAYOUT: SIDEBAR + CONTENT --}}
     <main class="max-w-7xl mx-auto px-4 py-8">
         <div class="grid gap-6 lg:grid-cols-[260px,1fr]">
             <aside>

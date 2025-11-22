@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Category;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class CategoryService
@@ -18,9 +19,14 @@ class CategoryService
 
         // return $this->categories->paginateAdmin($perPage) ako bi se islo preko repa;
         return Category::query()
+            ->with([
+                'parent',
+                'parent.parent',
+            ])
             ->withCount('ads')
             ->orderBy('name')
             ->paginate($perPage);
+
     }
 
     public function create(array $data): Category
@@ -63,5 +69,20 @@ class CategoryService
         }
 
         return Str::slug($data['name']);
+    }
+
+    /**
+     * Lista kategorija za <select> parent_id.
+     *
+     * @param  \App\Models\Category|null  $except  Kategorija koju treba isključiti (npr. kod edit-a).
+     */
+    public function getAllForParentSelect(?Category $except = null): Collection
+    {
+        return Category::query()
+            ->when($except, function ($query) use ($except) {
+                $query->where('id', '!=', $except->id);
+            })
+            ->orderBy('name')
+            ->get(['id', 'name', 'parent_id']);
     }
 }

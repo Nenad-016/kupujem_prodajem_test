@@ -2,17 +2,16 @@
 
 use App\Http\Controllers\AdController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 */
-
 
 Route::get('/', [AdController::class, 'index'])->name('home');
 
@@ -36,7 +35,6 @@ Route::get('/dashboard', function () {
     return redirect()->route('ads.my');
 })->middleware(['auth'])->name('dashboard');
 
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -59,15 +57,9 @@ Route::prefix('admin')
     ->middleware(['auth', 'role:admin'])
     ->group(function () {
 
-        Route::get('/', function () {
-            $stats = [
-                'ads_count' => \App\Models\Ad::count(),
-                'users_count' => \App\Models\User::count(),
-                'categories_count' => \App\Models\Category::count(),
-            ];
-
-            return view('admin.dashboard', compact('stats'));
-        })->name('dashboard');
+        // Admin dashboard – DashboardController
+        Route::get('/', [DashboardController::class, 'index'])
+            ->name('dashboard');
 
         // Categories (Admin)
         Route::get('/categories', [AdminCategoryController::class, 'index'])
@@ -89,4 +81,4 @@ Route::prefix('admin')
             ->name('categories.destroy');
     });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

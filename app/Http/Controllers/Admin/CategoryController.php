@@ -31,7 +31,9 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('admin.categories.create');
+        $parents = $this->service->getAllForParentSelect();
+
+        return view('admin.categories.create', compact('parents'));
     }
 
     /**
@@ -51,7 +53,9 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        return view('admin.categories.edit', compact('category'));
+        $parents = $this->service->getAllForParentSelect($category);
+
+        return view('admin.categories.edit', compact('category', 'parents'));
     }
 
     /**

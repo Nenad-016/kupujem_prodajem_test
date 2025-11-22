@@ -13,7 +13,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 class AdService
 {
     public function __construct(
-        protected AdRepositoryInterface $ads,
+        protected readonly AdRepositoryInterface $ads,
     ) {}
 
     public function listPublicAds(int $perPage = 15): LengthAwarePaginator

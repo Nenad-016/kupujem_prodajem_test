@@ -4,7 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Category;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class EloquentCategoryRepository extends BaseRepository implements CategoryRepositoryInterface
 {
@@ -13,7 +13,24 @@ class EloquentCategoryRepository extends BaseRepository implements CategoryRepos
         parent::__construct($model);
     }
 
-    public function getAllWithCounts(): Collection
+    public function paginateAdmin(int $perPage = 15): LengthAwarePaginator
+    {
+        return $this->model
+            ->newQuery()
+            ->withCount('ads')
+            ->orderBy('name')
+            ->paginate($perPage);
+    }
+
+    public function getAll(): iterable
+    {
+        return $this->model
+            ->newQuery()
+            ->orderBy('name')
+            ->get();
+    }
+
+    public function getAllWithCounts(): iterable
     {
         return $this->model
             ->newQuery()

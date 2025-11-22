@@ -2,9 +2,13 @@
 
 namespace App\Repositories\Contracts;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface CategoryRepositoryInterface extends BaseRepositoryInterface
 {
-    public function getAllWithCounts(): Collection;
+    public function paginateAdmin(int $perPage = 15): LengthAwarePaginator;
+
+    public function getAll(): iterable;
+
+    public function getAllWithCounts(): iterable;
 }

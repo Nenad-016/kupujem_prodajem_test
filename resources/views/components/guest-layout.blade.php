@@ -1,9 +1,9 @@
-{{-- resources/views/layouts/guest.blade.php --}}
+{{-- resources/views/components/guest-layout.blade.php --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <title>{{ $title ?? 'Prijava' }} | Mali oglasi</title>
+    <title>{{ $title ?? 'Mali oglasi - Prijava' }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,26 +18,18 @@
                     Mali oglasi – jednostavno, brzo, jasno.
                 </h1>
                 <p class="text-slate-600">
-                    Registrovani korisnici mogu da postavljaju, uređuju i brišu svoje oglase,
-                    dok admin ima potpunu kontrolu nad kategorijama i sadržajem.
+                    Registruj se da bi mogao da postavljaš i uređuješ svoje oglase.
+                    Admin ima poseban panel za upravljanje kategorijama i korisnicima.
                 </p>
                 <ul class="text-sm text-slate-600 space-y-1">
                     <li>• Brzo postavljanje oglasa</li>
-                    <li>• Kategorizacija i pretraga po lokaciji, ceni i stanju</li>
-                    <li>• Poseban admin panel za uređivanje sistema</li>
+                    <li>• Pretraga po kategoriji, ceni i lokaciji</li>
+                    <li>• Odvojene uloge za korisnike i administratore</li>
                 </ul>
             </div>
 
             <div class="bg-white shadow-lg rounded-xl p-8 border border-slate-100">
-                @isset($title)
-                    <h2 class="text-xl font-semibold text-slate-900 mb-1">{{ $title }}</h2>
-                @endisset
-
-                @isset($subtitle)
-                    <p class="text-sm text-slate-500 mb-6">{{ $subtitle }}</p>
-                @endisset
-
-                {{ $slot ?? '' }}
+                {{ $slot }}
             </div>
 
         </div>

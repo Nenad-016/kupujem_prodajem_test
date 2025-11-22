@@ -1,47 +1,76 @@
+{{-- resources/views/auth/login.blade.php --}}
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <h2 class="text-xl font-semibold text-slate-900 mb-1">Prijava</h2>
+    <p class="text-sm text-slate-500 mb-6">
+        Uloguj se da bi mogao da postavljaš i uređuješ svoje oglase.
+    </p>
 
-    <form method="POST" action="{{ route('login') }}">
+    @if ($errors->any())
+        <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <ul class="list-disc list-inside">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form method="POST" action="{{ route('login') }}" class="space-y-4">
         @csrf
 
-        <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+            <label for="email" class="block text-sm font-medium text-slate-700">
+                Email adresa
             </label>
+            <input
+                id="email"
+                type="email"
+                name="email"
+                value="{{ old('email') }}"
+                required
+                autofocus
+                class="mt-1 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            >
         </div>
 
-        <div class="flex items-center justify-end mt-4">
+        <div>
+            <label for="password" class="block text-sm font-medium text-slate-700">
+                Lozinka
+            </label>
+            <input
+                id="password"
+                type="password"
+                name="password"
+                required
+                class="mt-1 block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            >
+        </div>
+
+        <div class="flex items-center justify-between text-sm">
+            <label class="inline-flex items-center gap-2">
+                <input type="checkbox" name="remember" class="rounded border-slate-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
+                <span>Zapamti me</span>
+            </label>
+
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
+                <a href="{{ route('password.request') }}" class="text-indigo-600 hover:text-indigo-700">
+                    Zaboravljena lozinka?
                 </a>
             @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
         </div>
+
+        <button
+            type="submit"
+            class="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+            Prijavi se
+        </button>
     </form>
+
+    <div class="mt-6 text-center text-sm text-slate-600">
+        Nemaš nalog?
+        <a href="{{ route('register') }}" class="font-semibold text-indigo-600 hover:text-indigo-700">
+            Registruj se
+        </a>
+    </div>
 </x-guest-layout>

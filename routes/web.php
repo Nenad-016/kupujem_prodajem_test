@@ -4,12 +4,15 @@ use App\Http\Controllers\AdController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 */
+
 
 Route::get('/', [AdController::class, 'index'])->name('home');
 
@@ -19,8 +22,20 @@ Route::get('/categories/{category}/ads', [AdController::class, 'byCategory'])
     ->name('ads.by-category');
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    /** @var \App\Models\User|null $user */
+    $user = Auth::user();
+
+    if (! $user) {
+        return redirect()->route('home');
+    }
+
+    if ($user->isAdmin()) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    return redirect()->route('ads.my');
+})->middleware(['auth'])->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -41,8 +56,18 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware('role:admin')
+    ->middleware(['auth', 'role:admin'])
     ->group(function () {
+
+        Route::get('/', function () {
+            $stats = [
+                'ads_count' => \App\Models\Ad::count(),
+                'users_count' => \App\Models\User::count(),
+                'categories_count' => \App\Models\Category::count(),
+            ];
+
+            return view('admin.dashboard', compact('stats'));
+        })->name('dashboard');
 
         // Categories (Admin)
         Route::get('/categories', [AdminCategoryController::class, 'index'])
@@ -64,4 +89,4 @@ Route::prefix('admin')
             ->name('categories.destroy');
     });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -25,14 +25,14 @@ class AdController extends Controller
         $perPage = (int) $request->get('per_page', 15);
 
         $filters = [
-            'q'           => $request->get('q'),
-            'location'    => $request->get('location'),
+            'q' => $request->get('q'),
+            'location' => $request->get('location'),
             'category_id' => $request->get('category_id'),
-            'price_min'   => $request->get('price_min'),
-            'price_max'   => $request->get('price_max'),
+            'price_min' => $request->get('price_min'),
+            'price_max' => $request->get('price_max'),
         ];
 
-        $ads  = $this->service->listPublicAds($perPage, $filters);
+        $ads = $this->service->listPublicAds($perPage, $filters);
         $cats = $this->categories->getAllWithCounts();
 
         return view('ads.index', compact('ads', 'cats'));
@@ -46,11 +46,11 @@ class AdController extends Controller
         $perPage = (int) $request->get('per_page', 15);
 
         $filters = [
-            'q'           => $request->get('q'),
-            'location'    => $request->get('location'),
-            'price_min'   => $request->get('price_min'),
-            'price_max'   => $request->get('price_max'),
-            'category_id' => $category->id, 
+            'q' => $request->get('q'),
+            'location' => $request->get('location'),
+            'price_min' => $request->get('price_min'),
+            'price_max' => $request->get('price_max'),
+            'category_id' => $category->id,
         ];
 
         $ads = $this->service->listPublicAds($perPage, $filters);
@@ -61,12 +61,11 @@ class AdController extends Controller
             ->get();
 
         return view('ads.index', [
-            'ads'             => $ads,
-            'cats'            => $cats,
+            'ads' => $ads,
+            'cats' => $cats,
             'currentCategory' => $category,
         ]);
     }
-
 
     /**
      * Prikaz pojedinačnog oglasa.

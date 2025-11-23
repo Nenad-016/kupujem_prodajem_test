@@ -16,43 +16,43 @@ class AdService
         protected readonly AdRepositoryInterface $ads,
     ) {}
 
-     public function listPublicAds(int $perPage = 15, array $filters = []): LengthAwarePaginator
+    public function listPublicAds(int $perPage = 15, array $filters = []): LengthAwarePaginator
     {
         $query = Ad::query()
-            ->where('status', AdStatus::ACTIVE); 
+            ->where('status', AdStatus::ACTIVE);
 
-        if (!empty($filters['q'])) {
+        if (! empty($filters['q'])) {
             $search = trim($filters['q']);
 
             $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', '%' . $search . '%')
-                  ->orWhere('description', 'like', '%' . $search . '%')
-                  ->orWhere('phone', 'like', '%' . $search . '%');
+                $q->where('title', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%')
+                    ->orWhere('phone', 'like', '%'.$search.'%');
             });
         }
 
-        if (!empty($filters['location'])) {
+        if (! empty($filters['location'])) {
             $location = trim($filters['location']);
 
-            $query->where('location', 'like', '%' . $location . '%');
+            $query->where('location', 'like', '%'.$location.'%');
         }
 
-        if (!empty($filters['category_id'])) {
+        if (! empty($filters['category_id'])) {
             $query->where('category_id', $filters['category_id']);
         }
 
-        if (!empty($filters['price_min'])) {
+        if (! empty($filters['price_min'])) {
             $query->where('price', '>=', (float) $filters['price_min']);
         }
 
-        if (!empty($filters['price_max'])) {
+        if (! empty($filters['price_max'])) {
             $query->where('price', '<=', (float) $filters['price_max']);
         }
 
         return $query
             ->orderByDesc('created_at')
             ->paginate($perPage)
-            ->withQueryString(); 
+            ->withQueryString();
     }
 
     public function listPublicAdsByCategory(Category $category, int $perPage = 15, array $filters = []): LengthAwarePaginator

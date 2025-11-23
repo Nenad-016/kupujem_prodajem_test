@@ -59,7 +59,7 @@ class CategoryController extends Controller
             'children',
             'children.children',
             'ads' => function ($query) {
-                $query->latest()->limit(10); 
+                $query->latest()->limit(10);
             },
         ]);
 

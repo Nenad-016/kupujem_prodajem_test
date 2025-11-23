@@ -95,6 +95,20 @@
                                class="block w-full border rounded-lg px-3 py-2 text-sm">
                     </div>
 
+                    {{-- Telefon --}}
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+                            Telefon
+                        </label>
+                        <input
+                            type="text"
+                            name="phone"
+                            value="{{ old('phone', $ad->phone) }}"
+                            class="block w-full rounded-lg border-slate-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            placeholder="060 123 4567"
+                        >
+                    </div>
+
                     {{-- Kategorija --}}
                     <div class="md:col-span-2">
                         <label class="block text-xs font-semibold mb-1.5">Kategorija *</label>

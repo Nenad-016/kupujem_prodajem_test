@@ -33,6 +33,7 @@ class AdRequest extends FormRequest
                 'sometimes',
                 Rule::in(array_column(AdStatus::cases(), 'value')),
             ],
+            'phone' => ['nullable', 'string', 'max:50'],
         ];
     }
 }

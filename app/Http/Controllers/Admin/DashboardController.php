@@ -13,8 +13,8 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $stats        = $this->service->getStats();
-        $latestAds    = $this->service->getLatestAds(10);
+        $stats = $this->service->getStats();
+        $latestAds = $this->service->getLatestAds(10);
         $categoryTree = $this->service->getCategoryTree();
 
         return view('admin.dashboard', compact('stats', 'latestAds', 'categoryTree'));

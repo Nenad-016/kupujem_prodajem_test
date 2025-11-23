@@ -43,6 +43,21 @@
             {{ $ad->location ?? 'Nepoznato' }}
         </div>
 
+        {{-- Lokacija --}}
+        <div class="text-sm text-slate-600">
+            <strong>Lokacija:</strong>
+            {{ $ad->location ?? 'Nepoznato' }}
+        </div>
+
+        {{-- Telefon --}}
+        @if($ad->phone)
+            <div class="text-sm text-slate-600">
+                <strong>Telefon:</strong>
+                {{ $ad->phone }}
+            </div>
+        @endif
+
+
         {{-- Stanje (condition) --}}
         @php
             $condition = is_string($ad->condition)
@@ -90,6 +105,10 @@
             <br>
             <strong>Datum:</strong>
             {{ $ad->created_at?->format('d.m.Y H:i') }}
+            <br>
+            <strong> Telefon:</strong>
+            {{ $ad->user->phone ?? 'Nema telefona' }}
+
         </div>
 
     </div>

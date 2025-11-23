@@ -15,12 +15,12 @@ class AdminDashboardService
     public function getStats(): array
     {
         return [
-            'ads_count'             => Ad::count(),
-            'users_count'           => User::count(),
-            'categories_count'      => Category::count(),
+            'ads_count' => Ad::count(),
+            'users_count' => User::count(),
+            'categories_count' => Category::count(),
             'root_categories_count' => Category::whereNull('parent_id')->count(),
-            'ads_today'             => Ad::whereDate('created_at', today())->count(),
-            'users_today'           => User::whereDate('created_at', today())->count(),
+            'ads_today' => Ad::whereDate('created_at', today())->count(),
+            'users_today' => User::whereDate('created_at', today())->count(),
         ];
     }
 
@@ -37,7 +37,7 @@ class AdminDashboardService
     }
 
     /**
-     * Hijerarhija kategorija 
+     * Hijerarhija kategorija
      */
     public function getCategoryTree(): Collection
     {

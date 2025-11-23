@@ -220,6 +220,18 @@
                                   @endif
                                 </div>
 
+                                @if ($ad->phone)
+                                <p class="text-xs text-slate-600 mt-1">
+                                    Tel: {{ $ad->phone }}
+                                </p>
+                                @endif
+
+                                @if ($ad->user?->name)
+                                <p class="text-[11px] text-slate-400 mt-0.5">
+                                    Objavio: {{ $ad->user->name }}
+                                </p>
+                                 @endif
+
                                 @if (isset($ad->description))
                                     <p class="text-xs text-slate-600 mt-1 line-clamp-2">
                                         {{ \Illuminate\Support\Str::limit($ad->description, 90) }}

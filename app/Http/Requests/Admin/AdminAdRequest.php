@@ -24,6 +24,7 @@ class AdminAdRequest extends FormRequest
             'category_id' => ['required', 'exists:categories,id'],
             'user_id' => ['required', 'exists:users,id'],
             'image' => ['nullable', 'image', 'max:2048'],
+            'phone' => ['nullable', 'string', 'max:50'],
         ];
     }
 
@@ -39,6 +40,7 @@ class AdminAdRequest extends FormRequest
             'category_id' => 'kategorija',
             'user_id' => 'korisnik',
             'image' => 'slika oglasa',
+            'phone' => 'telefon',
         ];
     }
 }

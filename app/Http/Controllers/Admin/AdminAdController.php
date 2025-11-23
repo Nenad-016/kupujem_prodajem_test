@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\AdminAdRequest;
 use App\Models\Ad;
-use App\Models\Category;
-use App\Models\User;
+use App\Services\Admin\AdminAdService;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class AdminAdController extends Controller
 {
+    public function __construct(
+        protected readonly AdminAdService $service,
+    ) {}
+
     /**
      * Lista svih oglasa u admin panelu.
      */
@@ -18,10 +21,7 @@ class AdminAdController extends Controller
     {
         $perPage = (int) $request->get('per_page', 20);
 
-        $ads = Ad::query()
-            ->with(['user', 'category'])
-            ->orderByDesc('created_at')
-            ->paginate($perPage);
+        $ads = $this->service->listAds($perPage);
 
         return view('admin.ads.index', compact('ads'));
     }
@@ -31,35 +31,20 @@ class AdminAdController extends Controller
      */
     public function create()
     {
-        $categories = Category::orderBy('name')->get();
-        $users = User::orderBy('name')->get();
+        $formData = $this->service->getFormData();
 
-        return view('admin.ads.create', compact('categories', 'users'));
+        return view('admin.ads.create', $formData);
     }
 
     /**
      * Snimanje novog oglasa.
      */
-    public function store(Request $request)
+    public function store(AdminAdRequest $request)
     {
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'price' => ['nullable', 'numeric', 'min:0'],
-            'location' => ['nullable', 'string', 'max:255'],
-            'status' => ['required', Rule::in(['draft', 'active', 'archived'])],
-            'condition' => ['required', Rule::in(['new', 'used'])],
-            'category_id' => ['required', 'exists:categories,id'],
-            'user_id' => ['required', 'exists:users,id'],
-            'image' => ['nullable', 'image', 'max:2048'],
-        ]);
+        $data = $request->validated();
+        $image = $request->file('image');
 
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('ads', 'public');
-            $data['image_path'] = $path;
-        }
-
-        $ad = Ad::create($data);
+        $ad = $this->service->create($data, $image);
 
         return redirect()
             ->route('admin.ads.edit', $ad)
@@ -71,29 +56,22 @@ class AdminAdController extends Controller
      */
     public function edit(Ad $ad)
     {
-        $categories = Category::orderBy('name')->get();
-        $users = User::orderBy('name')->get();
+        $formData = $this->service->getFormData();
 
-        return view('admin.ads.edit', compact('ad', 'categories', 'users'));
+        return view('admin.ads.edit', array_merge($formData, [
+            'ad' => $ad,
+        ]));
     }
 
     /**
      * Ažuriranje oglasa.
      */
-    public function update(Request $request, Ad $ad)
+    public function update(AdminAdRequest $request, Ad $ad)
     {
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'price' => ['nullable', 'numeric', 'min:0'],
-            'location' => ['nullable', 'string', 'max:255'],
-            'status' => ['required', Rule::in(['draft', 'active', 'archived'])],
-            'condition' => ['required', Rule::in(['new', 'used'])],
-            'category_id' => ['required', 'exists:categories,id'],
-            'user_id' => ['required', 'exists:users,id'],
-        ]);
+        $data = $request->validated();
+        $image = $request->file('image');
 
-        $ad->update($data);
+        $this->service->update($ad, $data, $image);
 
         return redirect()
             ->route('admin.ads.edit', $ad)
@@ -105,7 +83,7 @@ class AdminAdController extends Controller
      */
     public function destroy(Ad $ad)
     {
-        $ad->delete();
+        $this->service->delete($ad);
 
         return redirect()
             ->route('admin.ads.index')

@@ -49,6 +49,24 @@ class CategoryController extends Controller
     }
 
     /**
+     * Prikazi pojedinacne kategorije
+     */
+    public function show(Category $category)
+    {
+        $category->load([
+            'parent',
+            'parent.parent',
+            'children',
+            'children.children',
+            'ads' => function ($query) {
+                $query->latest()->limit(10); 
+            },
+        ]);
+
+        return view('admin.categories.show', compact('category'));
+    }
+
+    /**
      * Forma za edit postojeće kategorije.
      */
     public function edit(Category $category)

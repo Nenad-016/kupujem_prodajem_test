@@ -1,4 +1,3 @@
-{{-- resources/views/layouts/front.blade.php --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -35,7 +34,10 @@
                     </a>
 
                     @if(auth()->user()->isAdmin())
-                        <a href="{{ route('admin.categories.index') }}" class="text-slate-700 hover:text-indigo-600">
+                        <a
+                            href="{{ route('admin.dashboard') }}"
+                            class="text-sm font-semibold text-slate-700 hover:text-indigo-600"
+                        >
                             Admin panel
                         </a>
                     @endif
@@ -69,17 +71,16 @@
     </header>
 
     <main class="max-w-7xl mx-auto px-4 py-8">
+        @include('partials.flash')
         <div class="grid gap-6 lg:grid-cols-[260px,1fr]">
             <aside>
                 @yield('sidebar')
             </aside>
-
             <section>
                 @yield('content')
             </section>
         </div>
     </main>
-
     <footer class="border-t border-slate-200 bg-white mt-8">
         <div class="max-w-7xl mx-auto px-4 py-4 text-xs text-slate-500 flex justify-between">
             <span>© {{ date('Y') }} Mali oglasi.</span>

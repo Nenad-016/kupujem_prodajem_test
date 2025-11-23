@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AdController;
+use App\Http\Controllers\Admin\AdminAdController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -43,7 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:user,admin')->group(function () {
         Route::get('/my-ads', [AdController::class, 'myAds'])->name('ads.my');
 
-        Route::get('/ads/create', [AdController::class, 'create'])->name('ads.create');
+        Route::get('/my-ads/create', [AdController::class, 'create'])->name('ads.create');
         Route::post('/ads', [AdController::class, 'store'])->name('ads.store');
 
         Route::get('/ads/{ad}/edit', [AdController::class, 'edit'])->name('ads.edit');
@@ -71,6 +73,9 @@ Route::prefix('admin')
         Route::post('/categories', [AdminCategoryController::class, 'store'])
             ->name('categories.store');
 
+        Route::get('/categories/{category}', [AdminCategoryController::class, 'show'])
+            ->name('categories.show');
+
         Route::get('/categories/{category}/edit', [AdminCategoryController::class, 'edit'])
             ->name('categories.edit');
 
@@ -79,6 +84,44 @@ Route::prefix('admin')
 
         Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])
             ->name('categories.destroy');
+
+        Route::get('/users', [AdminUserController::class, 'index'])
+            ->name('users.index');
+
+        // Users (Admin)
+        Route::get('/users/create', [AdminUserController::class, 'create'])
+            ->name('users.create');
+
+        Route::post('/users', [AdminUserController::class, 'store'])
+            ->name('users.store');
+
+        Route::get('/users/{user}/edit', [AdminUserController::class, 'edit'])
+            ->name('users.edit');
+
+        Route::put('/users/{user}', [AdminUserController::class, 'update'])
+            ->name('users.update');
+
+        Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])
+            ->name('users.destroy');
+
+        // Ads (Admin)
+        Route::get('/ads', [AdminAdController::class, 'index'])
+            ->name('ads.index');
+
+        Route::get('/ads/create', [AdminAdController::class, 'create'])
+            ->name('ads.create');
+
+        Route::post('/ads', [AdminAdController::class, 'store'])
+            ->name('ads.store');
+
+        Route::get('/ads/{ad}/edit', [AdminAdController::class, 'edit'])
+            ->name('ads.edit');
+
+        Route::put('/ads/{ad}', [AdminAdController::class, 'update'])
+            ->name('ads.update');
+
+        Route::delete('/ads/{ad}', [AdminAdController::class, 'destroy'])
+            ->name('ads.destroy');
     });
 
 require __DIR__.'/auth.php';

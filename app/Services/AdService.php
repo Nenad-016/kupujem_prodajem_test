@@ -16,14 +16,50 @@ class AdService
         protected readonly AdRepositoryInterface $ads,
     ) {}
 
-    public function listPublicAds(int $perPage = 15): LengthAwarePaginator
+     public function listPublicAds(int $perPage = 15, array $filters = []): LengthAwarePaginator
     {
-        return $this->ads->getPublicAdsPaginated($perPage);
+        $query = Ad::query()
+            ->where('status', AdStatus::ACTIVE); 
+
+        if (!empty($filters['q'])) {
+            $search = trim($filters['q']);
+
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('description', 'like', '%' . $search . '%')
+                  ->orWhere('phone', 'like', '%' . $search . '%');
+            });
+        }
+
+        if (!empty($filters['location'])) {
+            $location = trim($filters['location']);
+
+            $query->where('location', 'like', '%' . $location . '%');
+        }
+
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+
+        if (!empty($filters['price_min'])) {
+            $query->where('price', '>=', (float) $filters['price_min']);
+        }
+
+        if (!empty($filters['price_max'])) {
+            $query->where('price', '<=', (float) $filters['price_max']);
+        }
+
+        return $query
+            ->orderByDesc('created_at')
+            ->paginate($perPage)
+            ->withQueryString(); 
     }
 
-    public function listPublicAdsByCategory(Category $category, int $perPage = 15): LengthAwarePaginator
+    public function listPublicAdsByCategory(Category $category, int $perPage = 15, array $filters = []): LengthAwarePaginator
     {
-        return $this->ads->getAdsByCategory($category, $perPage);
+        $filters['category_id'] = $category->id;
+
+        return $this->listPublicAds($perPage, $filters);
     }
 
     public function listUserAds(User $user, int $perPage = 15): LengthAwarePaginator
@@ -35,7 +71,6 @@ class AdService
     {
         $data['user_id'] = $user->id;
 
-        // ako status nije prosleđen iz forme, podrazumevano ide draft
         $data['status'] = $data['status'] ?? AdStatus::DRAFT->value;
 
         /** @var Ad $ad */
@@ -50,7 +85,6 @@ class AdService
             throw new AuthorizationException('Nije ti dozvoljeno da menjaš ovaj oglas.');
         }
 
-        // ako iz requesta dođe status, normalizujemo ga kroz enum
         if (isset($data['status'])) {
             $data['status'] = AdStatus::from($data['status'])->value;
         }

@@ -28,6 +28,7 @@ class AdRequest extends FormRequest
             'description' => ['required', 'string'],
             'price' => ['nullable', 'numeric', 'min:0'],
             'category_id' => ['required', 'exists:categories,id'],
+            'condition' => ['required', Rule::in(['new', 'used'])],
             'status' => [
                 'sometimes',
                 Rule::in(array_column(AdStatus::cases(), 'value')),

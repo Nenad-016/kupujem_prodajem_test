@@ -57,13 +57,6 @@
             </a>
         </div>
     </div>
-
-    @if (session('success'))
-        <div class="mb-4 rounded-md bg-emerald-50 border border-emerald-100 px-4 py-2 text-sm text-emerald-800">
-            {{ session('success') }}
-        </div>
-    @endif
-
     <div class="bg-white rounded-xl shadow-sm border border-slate-200">
         @if ($categories->count())
             <div class="overflow-x-auto">
@@ -80,10 +73,12 @@
                         @foreach ($categories as $category)
                             <tr class="border-b last:border-0 border-slate-100">
                                 <td class="py-2 px-4 align-middle">
+                                    
                                     <div class="flex flex-col">
-                                        <span class="font-medium text-slate-800">
+                                        <a href="{{ route('admin.categories.show', $category) }}"
+                                           class="font-medium text-slate-800 hover:text-indigo-600">
                                             {{ $category->name }}
-                                        </span>
+                                        </a>
                                         @if ($category->slug)
                                             <span class="text-[11px] text-slate-400">
                                                 /{{ $category->slug }}

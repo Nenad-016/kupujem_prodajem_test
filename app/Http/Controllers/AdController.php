@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Services\AdService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AdController extends Controller
 {
@@ -23,7 +24,15 @@ class AdController extends Controller
     {
         $perPage = (int) $request->get('per_page', 15);
 
-        $ads = $this->service->listPublicAds($perPage);
+        $filters = [
+            'q'           => $request->get('q'),
+            'location'    => $request->get('location'),
+            'category_id' => $request->get('category_id'),
+            'price_min'   => $request->get('price_min'),
+            'price_max'   => $request->get('price_max'),
+        ];
+
+        $ads  = $this->service->listPublicAds($perPage, $filters);
         $cats = $this->categories->getAllWithCounts();
 
         return view('ads.index', compact('ads', 'cats'));
@@ -36,10 +45,28 @@ class AdController extends Controller
     {
         $perPage = (int) $request->get('per_page', 15);
 
-        $ads = $this->service->listPublicAdsByCategory($category, $perPage);
+        $filters = [
+            'q'           => $request->get('q'),
+            'location'    => $request->get('location'),
+            'price_min'   => $request->get('price_min'),
+            'price_max'   => $request->get('price_max'),
+            'category_id' => $category->id, 
+        ];
 
-        return view('ads.by-category', compact('ads', 'category'));
+        $ads = $this->service->listPublicAds($perPage, $filters);
+
+        $cats = Category::query()
+            ->withCount('ads')
+            ->orderBy('name')
+            ->get();
+
+        return view('ads.index', [
+            'ads'             => $ads,
+            'cats'            => $cats,
+            'currentCategory' => $category,
+        ]);
     }
+
 
     /**
      * Prikaz pojedinačnog oglasa.
@@ -83,7 +110,13 @@ class AdController extends Controller
      */
     public function store(AdRequest $request)
     {
-        $ad = $this->service->createForUser($request->user(), $request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $data['image_path'] = $request->file('image')->store('ads', 'public');
+        }
+
+        $ad = $this->service->createForUser($request->user(), $data);
 
         return redirect()
             ->route('ads.show', $ad)
@@ -109,7 +142,19 @@ class AdController extends Controller
      */
     public function update(AdRequest $request, Ad $ad)
     {
-        $this->service->updateAd($ad, $request->user(), $request->validated());
+        $data = $request->validated();
+
+        // Ako korisnik uploaduje novu sliku
+        if ($request->hasFile('image')) {
+            // Po želji obriši staru sliku
+            if ($ad->image_path) {
+                Storage::disk('public')->delete($ad->image_path);
+            }
+
+            $data['image_path'] = $request->file('image')->store('ads', 'public');
+        }
+
+        $this->service->updateAd($ad, $request->user(), $data);
 
         return redirect()
             ->route('ads.show', $ad)

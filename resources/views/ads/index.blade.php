@@ -194,6 +194,11 @@
                             </div>
 
                             <div class="p-3 flex flex-col gap-1">
+                                    @if ($ad->category)
+                                        <p class="text-[11px] text-slate-500">
+                                            {{ $ad->category->full_path }}
+                                        </p>
+                                    @endif
                                 <h2 class="text-sm font-semibold text-slate-900 line-clamp-2 group-hover:text-indigo-600">
                                     {{ $ad->title ?? 'Oglas #' . $ad->id }}
                                 </h2>

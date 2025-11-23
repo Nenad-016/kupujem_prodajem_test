@@ -48,7 +48,18 @@ class AdController extends Controller
             }
         }
 
-        return view('ads.show', compact('ad'));
+        $moreFromUser = Ad::query()
+            ->with('category.parent.parent')
+            ->where('user_id', $ad->user_id)
+            ->where('id', '!=', $ad->id)
+            ->orderByDesc('created_at')
+            ->limit(4)
+            ->get();
+
+        return view('ads.show', [
+            'ad' => $ad,
+            'moreFromUser' => $moreFromUser,
+        ]);
     }
 
     public function myAds(Request $request)

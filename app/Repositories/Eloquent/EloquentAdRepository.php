@@ -24,39 +24,29 @@ class EloquentAdRepository implements AdRepositoryInterface
 
     public function listPublicAds(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        $query = Ad::query()
+        return Ad::query()
+            ->with(['user', 'category.parent.parent'])
+            ->when($filters['q'] ?? null, function ($q, $value) {
+                $q->where(function ($qq) use ($value) {
+                    $qq->where('title', 'like', "%{$value}%")
+                      ->orWhere('description', 'like', "%{$value}%");
+                });
+            })
+            ->when($filters['location'] ?? null, function ($q, $value) {
+                $q->where('location', 'like', "%{$value}%");
+            })
+            ->when($filters['category_id'] ?? null, function ($q, $value) {
+                $q->where('category_id', $value);
+            })
+            ->when($filters['price_min'] ?? null, function ($q, $value) {
+                $q->where('price', '>=', $value);
+            })
+            ->when($filters['price_max'] ?? null, function ($q, $value) {
+                $q->where('price', '<=', $value);
+            })
             ->where('status', 'active')
-
-            ->with(['user', 'category']);
-
-        if (! empty($filters['q'])) {
-            $s = trim($filters['q']);
-            $query->where(function ($q) use ($s) {
-                $q->where('title', 'like', "%{$s}%")
-                    ->orWhere('description', 'like', "%{$s}%");
-            });
-        }
-
-        if (! empty($filters['location'])) {
-            $query->where('location', 'like', '%'.trim($filters['location']).'%');
-        }
-
-        if (! empty($filters['category_id'])) {
-            $query->where('category_id', $filters['category_id']);
-        }
-
-        if (! empty($filters['price_min'])) {
-            $query->where('price', '>=', (float) $filters['price_min']);
-        }
-
-        if (! empty($filters['price_max'])) {
-            $query->where('price', '<=', (float) $filters['price_max']);
-        }
-
-        return $query
             ->orderByDesc('created_at')
-            ->paginate($perPage)
-            ->withQueryString();
+            ->paginate($perPage);
     }
 
     public function listUserAds(User $user, int $perPage = 15): LengthAwarePaginator

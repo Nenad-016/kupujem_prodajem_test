@@ -43,12 +43,6 @@
             {{ $ad->location ?? 'Nepoznato' }}
         </div>
 
-        {{-- Lokacija --}}
-        <div class="text-sm text-slate-600">
-            <strong>Lokacija:</strong>
-            {{ $ad->location ?? 'Nepoznato' }}
-        </div>
-
         {{-- Telefon --}}
         @if($ad->phone)
             <div class="text-sm text-slate-600">
@@ -70,30 +64,17 @@
                 {{ $condition === 'new' ? 'Novo' : 'Polovno' }}
             </div>
         @endif
-
-        {{-- Status --}}
-        @php
-            $status = is_string($ad->status) ? $ad->status : $ad->status->value;
-        @endphp
-        <div>
-            <span class="inline-flex px-3 py-1 rounded-full text-xs font-semibold
-                @if($status === 'active') bg-green-100 text-green-700
-                @elseif($status === 'draft') bg-slate-100 text-slate-700
-                @else bg-amber-100 text-amber-700 @endif">
-                {{ ucfirst($status) }}
-            </span>
-        </div>
-
-        {{-- Kategorija --}}
-        <div class="text-sm text-slate-600">
-            <strong>Kategorija:</strong>
-            {{ $ad->category?->name ?? 'Nije podešeno' }}
-        </div>
+        
+     {{-- Kategorija --}}
+    <div class="text-sm text-slate-600">
+        <strong>Kategorija:</strong>
+        {{ $ad->category?->full_path ?? 'Nije podešeno' }}
+    </div>
 
         {{-- Opis --}}
         <div>
             <h2 class="text-sm font-semibold">Opis</h2>
-            <p class="text-sm text-slate-700 whitespace-pre-line">
+            <p class="text-sm text-slate-700">
                 {{ $ad->description ?? 'Nema opisa.' }}
             </p>
         </div>
@@ -101,16 +82,67 @@
         {{-- Vlasnik --}}
         <div class="text-sm text-slate-600 border-t pt-3">
             <strong>Postavio:</strong>
-            {{ $ad->user?->name ?? 'Nepoznat korisnik' }}
+            @if($ad->user)
+                <a
+                    href="{{ route('users.profile', $ad->user) }}"
+                    class="text-indigo-600 hover:underline"
+                >
+                    {{ $ad->user->name }}
+                </a>
+            @else
+                Nepoznat korisnik
+            @endif
             <br>
             <strong>Datum:</strong>
-            {{ $ad->created_at?->format('d.m.Y H:i') }}
-            <br>
-            <strong> Telefon:</strong>
-            {{ $ad->user->phone ?? 'Nema telefona' }}
-
+            {{ $ad->created_at->format('d.m.Y H:i') }}
         </div>
-
     </div>
-</div>
+    </div>
+    @if(isset($moreFromUser) && $moreFromUser->count())
+        <div class="mt-10">
+            <h2 class="text-lg font-bold text-slate-900 mb-4">
+                Još oglasa ovog korisnika
+            </h2>
+
+            <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                @foreach ($moreFromUser as $item)
+                    <article class="flex flex-col rounded-lg border border-slate-200 overflow-hidden hover:shadow-md transition-shadow bg-white">
+
+                        {{-- Slika --}}
+                        <div class="h-32 bg-slate-100 flex items-center justify-center text-xs text-slate-400">
+                            @if ($item->image_path)
+                                <img
+                                    src="{{ asset('storage/' . $item->image_path) }}"
+                                    alt="{{ $item->title }}"
+                                    class="h-full w-full object-cover"
+                                >
+                            @else
+                                Nema slike
+                            @endif
+                        </div>
+
+                        {{-- Info --}}
+                        <div class="p-3 flex flex-col gap-1">
+                            <h3 class="text-sm font-semibold text-slate-900 line-clamp-2">
+                                <a href="{{ route('ads.show', $item) }}" class="hover:text-indigo-600">
+                                    {{ $item->title }}
+                                </a>
+                            </h3>
+
+                            @if ($item->price)
+                                <p class="text-indigo-600 font-semibold text-sm">
+                                    {{ number_format($item->price, 0, ',', '.') }} RSD
+                                </p>
+                            @endif
+
+                            <p class="text-xs text-slate-500">
+                                {{ $item->location ?? 'Nepoznato' }}
+                            </p>
+                        </div>
+
+                    </article>
+                @endforeach
+            </div>
+        </div>    
+    @endif
 @endsection

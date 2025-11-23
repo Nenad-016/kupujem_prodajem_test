@@ -96,4 +96,23 @@ class UserController extends Controller
             ->route('admin.users.index')
             ->with('success', 'Korisnik je uspešno obrisan.');
     }
+
+    public function profile(User $user)
+    {
+        $ads = $user->ads()
+            ->latest()
+            ->paginate(12);
+
+        // "Primarni" oglas– npr. poslednji koji ima telefon
+        $primaryAd = $user->ads()
+            ->whereNotNull('phone')
+            ->latest()
+            ->first();
+
+        return view('users.profile', [
+            'user' => $user,
+            'ads' => $ads,
+            'primaryAd' => $primaryAd,
+        ]);
+    }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -123,5 +124,8 @@ Route::prefix('admin')
         Route::delete('/ads/{ad}', [AdminAdController::class, 'destroy'])
             ->name('ads.destroy');
     });
+
+Route::get('/users/{user}', [UserProfileController::class, 'show'])
+    ->name('users.profile');
 
 require __DIR__.'/auth.php';

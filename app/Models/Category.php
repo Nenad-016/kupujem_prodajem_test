@@ -38,4 +38,21 @@ class Category extends Model
     {
         return 'slug';
     }
+
+    /**
+     * Vraća punu putanju kategorije, npr:
+     * "Računari → Gejmerske konfiguracije".
+     */
+    public function getFullPathAttribute(): string
+    {
+        $parts = [];
+        $current = $this;
+
+        while ($current) {
+            array_unshift($parts, $current->name);
+            $current = $current->parent;
+        }
+
+        return implode(' → ', $parts);
+    }
 }

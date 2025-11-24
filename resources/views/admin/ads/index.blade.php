@@ -151,7 +151,7 @@
                                 </form>
                             @else
                                 {{-- Uredi --}}
-                                <a href="{{ route('admin.ads.edit', $ad) }}"
+                                <a href="{{ route('ads.edit', $ad) }}"
                                    class="text-xs text-indigo-600 hover:text-indigo-800">
                                     Uredi
                                 </a>

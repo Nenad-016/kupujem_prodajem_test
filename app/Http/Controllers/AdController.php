@@ -18,9 +18,9 @@ class AdController extends Controller
         protected readonly CategoryRepositoryInterface $categories,
     ) {}
 
-   public function index(Request $request)
+    public function index(Request $request)
     {
-        $ads  = $this->service->listPublicAds(15, $this->buildFilters($request));
+        $ads = $this->service->listPublicAds(15, $this->buildFilters($request));
         $cats = $this->categories->getAllWithCounts();
 
         return view('ads.index', compact('ads', 'cats'));
@@ -141,12 +141,12 @@ class AdController extends Controller
 
     public function byCategory(Request $request, Category $category)
     {
-        $ads  = $this->service->listPublicAds(15, $this->buildFilters($request, $category->id));
+        $ads = $this->service->listPublicAds(15, $this->buildFilters($request, $category->id));
         $cats = $this->categories->getAllWithCounts();
 
         return view('ads.index', [
-            'ads'             => $ads,
-            'cats'            => $cats,
+            'ads' => $ads,
+            'cats' => $cats,
             'currentCategory' => $category,
         ]);
     }
@@ -154,11 +154,11 @@ class AdController extends Controller
     private function buildFilters(Request $request, ?int $forcedCategoryId = null): array
     {
         return [
-            'q'          => $request->get('q'),
-            'location'   => $request->get('location'),
-            'category_id'=> $forcedCategoryId ?? $request->get('category_id'),
-            'price_min'  => $request->get('price_min'),
-            'price_max'  => $request->get('price_max'),
+            'q' => $request->get('q'),
+            'location' => $request->get('location'),
+            'category_id' => $forcedCategoryId ?? $request->get('category_id'),
+            'price_min' => $request->get('price_min'),
+            'price_max' => $request->get('price_max'),
         ];
     }
 }

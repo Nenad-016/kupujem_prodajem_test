@@ -19,9 +19,9 @@ class AdminAdService
     /**
      * Lista oglasa za admin panel.
      */
-    public function listAds(int $perPage = 20): LengthAwarePaginator
+    public function listAds(int $perPage = 20, bool $withTrashed = false): LengthAwarePaginator
     {
-        return $this->ads->paginateWithRelations($perPage);
+        return $this->ads->paginateWithRelations($perPage, $withTrashed);
     }
 
     /**
@@ -69,13 +69,10 @@ class AdminAdService
     }
 
     /**
-     * Brisanje oglasa (uključujući i sliku).
+     * Brisanje oglasa.
      */
     public function delete(Ad $ad): void
     {
-        if ($ad->image_path) {
-            Storage::disk('public')->delete($ad->image_path);
-        }
 
         $this->ads->delete($ad);
     }

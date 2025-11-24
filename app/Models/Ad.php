@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Ad extends Model
 {
     use SoftDeletes;
-    
+
     protected $fillable = [
         'user_id',
         'category_id',

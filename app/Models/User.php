@@ -61,4 +61,15 @@ class User extends Authenticatable
     {
         return $this->role === 'user';
     }
+
+    public function getAvatarInitialAttribute(): string
+    {
+        $name = $this->name ?: $this->email ?: 'U';
+
+        $trimmed = trim($name);
+
+        $firstChar = mb_substr($trimmed, 0, 1, 'UTF-8');
+
+        return mb_strtoupper($firstChar, 'UTF-8');
+    }
 }

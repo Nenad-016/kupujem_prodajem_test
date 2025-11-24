@@ -21,7 +21,7 @@ class AdminAdController extends Controller
     {
         $perPage = (int) $request->get('per_page', 20);
 
-        $ads = $this->service->listAds($perPage);
+        $ads = $this->service->listAds($perPage, true);
 
         return view('admin.ads.index', compact('ads'));
     }
@@ -88,5 +88,19 @@ class AdminAdController extends Controller
         return redirect()
             ->route('admin.ads.index')
             ->with('success', 'Oglas je uspešno obrisan.');
+    }
+
+    /**
+     * Vracanje obrisanih oglasa.
+     */
+    public function restore(int $id)
+    {
+        $ad = Ad::withTrashed()->findOrFail($id);
+
+        $ad->restore();
+
+        return redirect()
+            ->route('admin.ads.index')
+            ->with('success', 'Oglas je uspešno vraćen.');
     }
 }

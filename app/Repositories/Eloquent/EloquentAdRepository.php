@@ -29,7 +29,7 @@ class EloquentAdRepository implements AdRepositoryInterface
             ->when($filters['q'] ?? null, function ($q, $value) {
                 $q->where(function ($qq) use ($value) {
                     $qq->where('title', 'like', "%{$value}%")
-                      ->orWhere('description', 'like', "%{$value}%");
+                        ->orWhere('description', 'like', "%{$value}%");
                 });
             })
             ->when($filters['location'] ?? null, function ($q, $value) {

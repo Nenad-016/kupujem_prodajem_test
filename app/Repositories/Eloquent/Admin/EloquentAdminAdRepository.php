@@ -8,12 +8,17 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class EloquentAdminAdRepository implements AdminAdRepositoryInterface
 {
-    public function paginateWithRelations(int $perPage = 20): LengthAwarePaginator
+    public function paginateWithRelations(int $perPage = 20, bool $withTrashed = false): LengthAwarePaginator
     {
-        return Ad::query()
+        $query = Ad::query()
             ->with(['user', 'category'])
-            ->orderByDesc('created_at')
-            ->paginate($perPage);
+            ->orderByDesc('created_at');
+
+        if ($withTrashed) {
+            $query->withTrashed();
+        }
+
+        return $query->paginate($perPage);
     }
 
     public function create(array $data): Ad

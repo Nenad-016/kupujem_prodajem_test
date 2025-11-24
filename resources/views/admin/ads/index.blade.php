@@ -34,22 +34,22 @@
 
 @section('content')
     <div class="flex items-center justify-between mb-4">
-    <div>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">
-            Oglasi
-        </h1>
-        <p class="text-sm text-slate-500">
-            Pregled svih oglasa u sistemu.
-        </p>
-    </div>
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900">
+                Oglasi
+            </h1>
+            <p class="text-sm text-slate-500">
+                Pregled svih oglasa u sistemu.
+            </p>
+        </div>
 
-    <a
-        href="{{ route('admin.ads.create') }}"
-        class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700"
-    >
-        + Kreiraj oglas
-    </a>
-</div>
+        <a
+            href="{{ route('admin.ads.create') }}"
+            class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700"
+        >
+            + Kreiraj oglas
+        </a>
+    </div>
 
     <div class="bg-white rounded-xl shadow-sm border border-slate-200">
         <table class="min-w-full text-sm">
@@ -67,8 +67,21 @@
             </thead>
             <tbody class="divide-y divide-slate-100">
                 @forelse($ads as $ad)
-                    <tr>
-                        <td class="px-4 py-2 text-slate-500 align-middle">#{{ $ad->id }}</td>
+                    @php
+                        // Normalizujemo status na string (active/draft/...),
+                        // bez obzira da li je enum ili plain string.
+                        $status = is_string($ad->status)
+                            ? $ad->status
+                            : ($ad->status->value ?? null);
+                    @endphp
+
+                    <tr @class([
+                        // ako je soft-deleted, malo ga "izbleđujemo"
+                        'bg-slate-50 opacity-60' => $ad->trashed(),
+                    ])>
+                        <td class="px-4 py-2 text-slate-500 align-middle">
+                            #{{ $ad->id }}
+                        </td>
 
                         <td class="px-4 py-2 align-middle">
                             <div class="font-medium text-slate-900 line-clamp-1">
@@ -77,7 +90,14 @@
                         </td>
 
                         <td class="px-4 py-2 align-middle text-slate-700">
-                            {{ $ad->user?->name ?? '—' }}
+                            @if($ad->user)
+                                <div class="flex items-center gap-2">
+                                    <x-avatar :user="$ad->user" size="sm" />
+                                    <span>{{ $ad->user->name }}</span>
+                                </div>
+                            @else
+                                —
+                            @endif
                         </td>
 
                         <td class="px-4 py-2 align-middle text-slate-700">
@@ -85,17 +105,24 @@
                         </td>
 
                         <td class="px-4 py-2 align-middle">
-                            <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold
-                                @if($ad->status->value ?? $ad->status === 'active')
-                                    bg-emerald-100 text-emerald-700
-                                @elseif($ad->status->value ?? $ad->status === 'draft')
-                                    bg-slate-100 text-slate-700
-                                @else
-                                    bg-amber-100 text-amber-700
-                                @endif
-                            ">
-                                {{ is_string($ad->status) ? ucfirst($ad->status) : ucfirst($ad->status->value) }}
-                            </span>
+                            @if ($ad->trashed())
+                                {{-- Ako je soft-deleted, jasno označimo --}}
+                                <span class="inline-flex items-center rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700">
+                                    Obrisano
+                                </span>
+                            @else
+                                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold
+                                    @if($status === 'active')
+                                        bg-emerald-100 text-emerald-700
+                                    @elseif($status === 'draft')
+                                        bg-slate-100 text-slate-700
+                                    @else
+                                        bg-amber-100 text-amber-700
+                                    @endif
+                                ">
+                                    {{ $status ? ucfirst($status) : '—' }}
+                                </span>
+                            @endif
                         </td>
 
                         <td class="px-4 py-2 align-middle text-slate-700">
@@ -111,22 +138,37 @@
                         </td>
 
                         <td class="px-4 py-2 align-middle text-right space-x-2">
-                            <a href="{{ route('admin.ads.edit', $ad) }}"
-                               class="text-xs text-indigo-600 hover:text-indigo-800">
-                                Uredi
-                            </a>
+                            @if ($ad->trashed())
+                                {{-- UNDO / RESTORE --}}
+                                <form action="{{ route('admin.ads.restore', $ad->id) }}"
+                                      method="POST"
+                                      class="inline">
+                                    @csrf
+                                    <button type="submit"
+                                            class="text-xs text-emerald-700 hover:text-emerald-900">
+                                        Vrati
+                                    </button>
+                                </form>
+                            @else
+                                {{-- Uredi --}}
+                                <a href="{{ route('admin.ads.edit', $ad) }}"
+                                   class="text-xs text-indigo-600 hover:text-indigo-800">
+                                    Uredi
+                                </a>
 
-                            <form action="{{ route('admin.ads.destroy', $ad) }}"
-                                  method="POST"
-                                  class="inline"
-                                  onsubmit="return confirm('Da li ste sigurni da želite da obrišete ovaj oglas?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                        class="text-xs text-rose-600 hover:text-rose-800">
-                                    Obriši
-                                </button>
-                            </form>
+                                {{-- Obriši (soft delete) --}}
+                                <form action="{{ route('admin.ads.destroy', $ad) }}"
+                                      method="POST"
+                                      class="inline"
+                                      onsubmit="return confirm('Da li ste sigurni da želite da obrišete ovaj oglas?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            class="text-xs text-rose-600 hover:text-rose-800">
+                                        Obriši
+                                    </button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @empty

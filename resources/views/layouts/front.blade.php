@@ -7,13 +7,13 @@
 
     {{-- Tailwind CDN --}}
     <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
 <body class="min-h-screen bg-slate-100 text-slate-900">
 
     {{-- HEADER / NAVBAR --}}
     <header class="bg-white shadow-sm">
         <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+            {{-- Logo + naziv --}}
             <a href="{{ route('home') }}" class="flex items-center gap-2">
                 <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white font-bold">
                     MO
@@ -23,7 +23,8 @@
                 </span>
             </a>
 
-            <nav class="flex items-center gap-4 text-sm">
+            {{-- Navigacija --}}
+            <nav class="flex items-center gap-6 text-sm">
                 <a href="{{ route('home') }}" class="text-slate-700 hover:text-indigo-600">
                     Početna
                 </a>
@@ -42,16 +43,39 @@
                         </a>
                     @endif
 
-                    <form method="POST" action="{{ route('logout') }}" class="inline">
-                        @csrf
-                        <button
-                            type="submit"
-                            class="inline-flex items-center rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
-                        >
-                            Odjava
-                        </button>
-                    </form>
+                    {{-- Avatar + ime + odjava --}}
+                    @php
+                        /** @var \App\Models\User $user */
+                        $user = auth()->user();
+                        $initial = $user && $user->name
+                            ? strtoupper(substr($user->name, 0, 1))
+                            : 'U';
+                    @endphp
+
+                    <div class="flex items-center">
+                        {{-- Avatar + ime (link ka profilu) --}}
+                        <a href="{{ route('profile.edit') }}" class="mr-4 flex items-center gap-2">
+                            <div class="h-8 w-8 flex items-center justify-center rounded-full bg-indigo-600 text-white text-sm font-semibold">
+                                {{ $initial }}
+                            </div>
+                            <span class="text-sm font-medium text-slate-700 hover:text-indigo-600">
+                                {{ $user?->name }}
+                            </span>
+                        </a>
+
+                        {{-- Odjava --}}
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button
+                                type="submit"
+                                class="inline-flex items-center rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                            >
+                                Odjava
+                            </button>
+                        </form>
+                    </div>
                 @else
+                    {{-- Gost: prijava / registracija --}}
                     <a
                         href="{{ route('login') }}"
                         class="text-slate-700 hover:text-indigo-600 text-sm"
@@ -72,15 +96,18 @@
 
     <main class="max-w-7xl mx-auto px-4 py-8">
         @include('partials.flash')
+
         <div class="grid gap-6 lg:grid-cols-[260px,1fr]">
             <aside>
                 @yield('sidebar')
             </aside>
+
             <section>
                 @yield('content')
             </section>
         </div>
     </main>
+
     <footer class="border-t border-slate-200 bg-white mt-8">
         <div class="max-w-7xl mx-auto px-4 py-4 text-xs text-slate-500 flex justify-between">
             <span>© {{ date('Y') }} Mali oglasi.</span>

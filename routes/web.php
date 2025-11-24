@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/ads/{ad}/edit', [AdController::class, 'edit'])->name('ads.edit');
         Route::put('/ads/{ad}', [AdController::class, 'update'])->name('ads.update');
         Route::delete('/ads/{ad}', [AdController::class, 'destroy'])->name('ads.destroy');
+
     });
 });
 
@@ -123,6 +124,10 @@ Route::prefix('admin')
 
         Route::delete('/ads/{ad}', [AdminAdController::class, 'destroy'])
             ->name('ads.destroy');
+
+        Route::post('/ads/{ad}/restore', [AdminAdController::class, 'restore'])
+            ->withTrashed()
+            ->name('ads.restore');
     });
 
 Route::get('/users/{user}', [UserProfileController::class, 'show'])

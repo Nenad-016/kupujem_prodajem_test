@@ -70,8 +70,8 @@ class EloquentAdRepository implements AdRepositoryInterface
         return $ad;
     }
 
-    public function delete(Ad $ad): void
+    public function delete(Ad $ad): bool
     {
-        $ad->delete();
+        return (bool) $ad->delete();
     }
 }

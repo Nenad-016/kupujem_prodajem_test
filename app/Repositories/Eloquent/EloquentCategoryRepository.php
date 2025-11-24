@@ -31,11 +31,18 @@ class EloquentCategoryRepository extends BaseRepository implements CategoryRepos
     }
 
     public function getAllWithCounts(): iterable
-    {
-        return $this->model
-            ->newQuery()
-            ->withCount('ads')
-            ->orderBy('name')
-            ->get();
-    }
+{
+    return Category::query()
+        ->withCount('ads')
+        ->with([
+            'children' => function ($q) {
+                $q->withCount('ads')
+                  ->with('children');
+            },
+        ])
+        ->whereNull('parent_id')   
+        ->orderBy('name')
+        ->get();
+}
+
 }

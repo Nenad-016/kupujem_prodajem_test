@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AdRequest;
 use App\Models\Ad;
+use App\Models\Category;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Services\AdService;
 use Illuminate\Http\Request;
@@ -17,23 +18,12 @@ class AdController extends Controller
         protected readonly CategoryRepositoryInterface $categories,
     ) {}
 
-    public function index(Request $request)
+   public function index(Request $request)
     {
-        $filters = [
-            'q' => $request->get('q'),
-            'location' => $request->get('location'),
-            'category_id' => $request->get('category_id'),
-            'price_min' => $request->get('price_min'),
-            'price_max' => $request->get('price_max'),
-        ];
-
-        $ads = $this->service->listPublicAds(15, $filters);
+        $ads  = $this->service->listPublicAds(15, $this->buildFilters($request));
         $cats = $this->categories->getAllWithCounts();
 
-        return view('ads.index', [
-            'ads' => $ads,
-            'cats' => $cats,
-        ]);
+        return view('ads.index', compact('ads', 'cats'));
     }
 
     public function show(Request $request, Ad $ad)
@@ -147,5 +137,28 @@ class AdController extends Controller
             return back()
                 ->with('error', 'Došlo je do greške pri brisanju oglasa.');
         }
+    }
+
+    public function byCategory(Request $request, Category $category)
+    {
+        $ads  = $this->service->listPublicAds(15, $this->buildFilters($request, $category->id));
+        $cats = $this->categories->getAllWithCounts();
+
+        return view('ads.index', [
+            'ads'             => $ads,
+            'cats'            => $cats,
+            'currentCategory' => $category,
+        ]);
+    }
+
+    private function buildFilters(Request $request, ?int $forcedCategoryId = null): array
+    {
+        return [
+            'q'          => $request->get('q'),
+            'location'   => $request->get('location'),
+            'category_id'=> $forcedCategoryId ?? $request->get('category_id'),
+            'price_min'  => $request->get('price_min'),
+            'price_max'  => $request->get('price_max'),
+        ];
     }
 }

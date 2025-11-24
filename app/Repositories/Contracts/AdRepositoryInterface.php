@@ -20,5 +20,5 @@ interface AdRepositoryInterface
 
     public function update(Ad $ad, array $data): Ad;
 
-    public function delete(Ad $ad): void;
+    public function delete(Ad $ad): bool;
 }

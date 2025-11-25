@@ -13,39 +13,40 @@ class InstallCommand extends Command
 
     public function handle()
     {
-        $this->info("🚀 Pokrećem instalaciju aplikacije...");
+        $this->info('🚀 Pokrećem instalaciju aplikacije...');
 
         // Laravel key
-        if (!file_exists(storage_path('framework/laravel-exists'))) {
-            $this->info("🔑 Generišem app key...");
+        if (! file_exists(storage_path('framework/laravel-exists'))) {
+            $this->info('🔑 Generišem app key...');
             $this->runProcess('php artisan key:generate');
         }
 
         // Storage link
-        $this->info("🔗 Kreiram storage symlink...");
+        $this->info('🔗 Kreiram storage symlink...');
         $this->runProcess('php artisan storage:link');
 
         // Migracije
         if ($this->option('fresh')) {
-            $this->info("🧨 Pokrećem fresh migracije...");
+            $this->info('🧨 Pokrećem fresh migracije...');
             $this->runProcess('php artisan migrate:fresh --seed');
         } else {
-            $this->info("📚 Pokrećem migracije...");
+            $this->info('📚 Pokrećem migracije...');
             $this->runProcess('php artisan migrate --seed');
         }
 
         // NPM build
         if (! $this->option('no-build')) {
-            $this->info("🎨 Radim npm build...");
+            $this->info('🎨 Radim npm build...');
             $this->runProcess('npm run build');
         } else {
-            $this->info("⏭ Preskačem npm build (--no-build)");
+            $this->info('⏭ Preskačem npm build (--no-build)');
         }
 
-        $this->info("⚡ Čišćenje keša...");
+        $this->info('⚡ Čišćenje keša...');
         $this->runProcess('php artisan optimize:clear');
 
-        $this->info("🎉 Instalacija završena!");
+        $this->info('🎉 Instalacija završena!');
+
         return Command::SUCCESS;
     }
 

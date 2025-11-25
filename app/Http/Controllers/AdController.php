@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AdReportRequest;
 use App\Http\Requests\AdRequest;
 use App\Models\Ad;
-use App\Models\Category;
-use App\Services\AdService;
 use App\Models\AdReport;
+use App\Models\Category;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
+use App\Services\AdService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -40,8 +40,8 @@ class AdController extends Controller
             }
         }
 
-       $moreFromUser = $this->service->getMoreFromUser($ad);
-       
+        $moreFromUser = $this->service->getMoreFromUser($ad);
+
         return view('ads.show', [
             'ad' => $ad,
             'moreFromUser' => $moreFromUser,
@@ -161,16 +161,16 @@ class AdController extends Controller
     public function report(AdReportRequest $request, Ad $ad)
     {
         $request->validate([
-            'reason'  => ['required', 'string', 'max:255'],
+            'reason' => ['required', 'string', 'max:255'],
             'message' => ['nullable', 'string', 'max:2000'],
         ]);
 
         AdReport::create([
-            'ad_id'   => $ad->id,
+            'ad_id' => $ad->id,
             'user_id' => $request->user()->id,
-            'reason'  => $request->input('reason'),
+            'reason' => $request->input('reason'),
             'message' => $request->input('message'),
-            'status'  => 'pending',
+            'status' => 'pending',
         ]);
 
         return back()->with('success', 'Hvala, prijava oglasa je sačuvana. Naš tim će je proveriti.');

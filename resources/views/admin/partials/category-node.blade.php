@@ -3,15 +3,21 @@
 @endphp
 
 <li>
-    <div class="flex items-center">
-        @if($depth > 0)
-            <span class="text-slate-300 mr-1">
-                {!! str_repeat('&mdash;', $depth) !!}
-            </span>
-        @endif
+    <div class="flex items-center justify-between">
+        <div class="flex items-center">
+            @if($depth > 0)
+                <span class="text-slate-300 mr-1">
+                    {!! str_repeat('&mdash;', $depth) !!}
+                </span>
+            @endif
 
-        <span class="text-slate-700">
-            {{ $category->name }}
+            <span class="text-slate-700">
+                {{ $category->name }}
+            </span>
+        </div>
+
+        <span class="text-xs text-slate-500 ml-2">
+            {{ $category->allAdsCount() }}
         </span>
     </div>
 

@@ -33,19 +33,15 @@
         <div>
             <h1 class="text-2xl font-bold tracking-tight text-slate-900">
                 @isset($currentCategory)
-                    Oglasi u kategoriji: {{ $currentCategory->name }}
+                    Oglasi u kategoriji:
+                    <span class="font-semibold">
+                        {{ $currentCategory->full_path ?? $currentCategory->name }}
+                    </span>
                 @else
                     Svi oglasi
                 @endisset
             </h1>
 
-            <p class="text-sm text-slate-500">
-                @isset($currentCategory)
-                    Pregled oglasa iz kategorije „{{ $currentCategory->name }}“.
-                @else
-                    Pregled najnovijih oglasa iz svih kategorija.
-                @endisset
-            </p>
         </div>
 
         @auth
@@ -132,8 +128,6 @@
         </form>
 
     </div>
-
-
 
     {{-- ========================= LISTA OGLASA ========================= --}}
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">

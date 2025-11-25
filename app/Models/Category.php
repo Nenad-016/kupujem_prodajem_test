@@ -38,11 +38,7 @@ class Category extends Model
     {
         return 'slug';
     }
-
-    /**
-     * Vraća punu putanju kategorije, npr:
-     * "Računari → Gejmerske konfiguracije".
-     */
+   
     public function getFullPathAttribute(): string
     {
         $parts = [];
@@ -54,5 +50,16 @@ class Category extends Model
         }
 
         return implode(' → ', $parts);
+    }
+
+    public function allAdsCount(): int
+    {
+        if ($this->children()->exists()) {
+            return $this->children
+                ->map(fn ($child) => $child->allAdsCount())
+                ->sum();
+        }
+
+        return $this->ads()->count();
     }
 }

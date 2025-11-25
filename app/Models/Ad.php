@@ -45,5 +45,4 @@ class Ad extends Model
     {
         return $this->hasMany(AdReport::class);
     }
-
 }

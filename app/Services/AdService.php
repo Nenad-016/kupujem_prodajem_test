@@ -7,9 +7,9 @@ use App\Models\Category;
 use App\Models\User;
 use App\Repositories\Contracts\AdRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Database\Eloquent\Collection;
 
 class AdService
 {
@@ -73,5 +73,4 @@ class AdService
     {
         return $this->ads->getMoreFromUser($ad, $limit);
     }
-
 }

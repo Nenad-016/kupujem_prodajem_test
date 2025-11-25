@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('ad_reports', function (Blueprint $table) {
+        Schema::create('ad_reports', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('ad_id')
@@ -23,8 +23,8 @@ return new class extends Migration
                 ->constrained()
                 ->nullOnDelete();
 
-            $table->string('reason')->nullable();   
-            $table->text('message')->nullable();   
+            $table->string('reason')->nullable();
+            $table->text('message')->nullable();
             $table->string('status')->default('pending');
             $table->timestamps();
         });

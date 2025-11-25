@@ -20,7 +20,7 @@ class AdReportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'reason'  => ['required', 'string', 'max:255'],
+            'reason' => ['required', 'string', 'max:255'],
             'message' => ['nullable', 'string', 'max:2000'],
         ];
     }

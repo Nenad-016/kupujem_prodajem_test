@@ -2,15 +2,14 @@
 
 use App\Http\Controllers\AdController;
 use App\Http\Controllers\Admin\AdminAdController;
+use App\Http\Controllers\Admin\AdminAdReportController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserProfileController;
-use App\Http\Controllers\Admin\AdminAdReportController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-
 
 /*
 |--------------------------------------------------------------------------

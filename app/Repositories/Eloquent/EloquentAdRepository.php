@@ -24,46 +24,46 @@ class EloquentAdRepository implements AdRepositoryInterface
     }
 
     public function listPublicAds(array $filters = [], int $perPage = 15): LengthAwarePaginator
-{
-    return Ad::query()
-        ->with(['user', 'category.parent.parent'])
+    {
+        return Ad::query()
+            ->with(['user', 'category.parent.parent'])
 
-        // SEARCH po title + description
-        ->when($filters['q'] ?? null, function ($q, $value) {
-            $q->where(function ($qq) use ($value) {
-                $qq->where('title', 'like', "%{$value}%")
-                    ->orWhere('description', 'like', "%{$value}%");
-            });
-        })
+            // SEARCH po title + description
+            ->when($filters['q'] ?? null, function ($q, $value) {
+                $q->where(function ($qq) use ($value) {
+                    $qq->where('title', 'like', "%{$value}%")
+                        ->orWhere('description', 'like', "%{$value}%");
+                });
+            })
 
-        // LOKACIJA
-        ->when($filters['location'] ?? null, function ($q, $value) {
-            $q->where('location', 'like', "%{$value}%");
-        })
+            // LOKACIJA
+            ->when($filters['location'] ?? null, function ($q, $value) {
+                $q->where('location', 'like', "%{$value}%");
+            })
 
-        // KATEGORIJA
-        ->when($filters['category_id'] ?? null, function ($q, $value) {
-            if (is_array($value)) {
-                if (count($value)) {
-                    $q->whereIn('category_id', $value);
+            // KATEGORIJA
+            ->when($filters['category_id'] ?? null, function ($q, $value) {
+                if (is_array($value)) {
+                    if (count($value)) {
+                        $q->whereIn('category_id', $value);
+                    }
+                } else {
+                    $q->where('category_id', $value);
                 }
-            } else {
-                $q->where('category_id', $value);
-            }
-        })
+            })
 
-        // CENA
-        ->when($filters['price_min'] ?? null, function ($q, $value) {
-            $q->where('price', '>=', $value);
-        })
-        ->when($filters['price_max'] ?? null, function ($q, $value) {
-            $q->where('price', '<=', $value);
-        })
+            // CENA
+            ->when($filters['price_min'] ?? null, function ($q, $value) {
+                $q->where('price', '>=', $value);
+            })
+            ->when($filters['price_max'] ?? null, function ($q, $value) {
+                $q->where('price', '<=', $value);
+            })
 
-        ->where('status', 'active')
-        ->orderByDesc('created_at')
-        ->paginate($perPage);
-}
+            ->where('status', 'active')
+            ->orderByDesc('created_at')
+            ->paginate($perPage);
+    }
 
     public function listUserAds(User $user, int $perPage = 15): LengthAwarePaginator
     {

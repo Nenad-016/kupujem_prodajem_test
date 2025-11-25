@@ -28,20 +28,39 @@
 {{-- ========================= MAIN CONTENT ========================= --}}
 @section('content')
 
+    @php
+        // Da li je bar jedan filter aktivan (osim paginacije)
+        $hasFilters = request()->filled('q')
+            || request()->filled('location')
+            || request()->filled('category_id')
+            || request()->filled('price_min')
+            || request()->filled('price_max');
+    @endphp
+
     {{-- Header --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
             <h1 class="text-2xl font-bold tracking-tight text-slate-900">
                 @isset($currentCategory)
-                    Oglasi u kategoriji:
-                    <span class="font-semibold">
-                        {{ $currentCategory->full_path ?? $currentCategory->name }}
-                    </span>
+                    @if ($hasFilters)
+                        Rezultati pretrage u kategoriji:
+                        <span class="font-semibold">
+                            {{ $currentCategory->full_path ?? $currentCategory->name }}
+                        </span>
+                    @else
+                        Oglasi u kategoriji:
+                        <span class="font-semibold">
+                            {{ $currentCategory->full_path ?? $currentCategory->name }}
+                        </span>
+                    @endif
                 @else
-                    Svi oglasi
+                    @if ($hasFilters)
+                        Rezultati pretrage:
+                    @else
+                        Svi oglasi:
+                    @endif
                 @endisset
             </h1>
-
         </div>
 
         @auth

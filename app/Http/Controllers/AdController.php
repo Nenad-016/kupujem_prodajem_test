@@ -159,10 +159,29 @@ class AdController extends Controller
 
     private function buildFilters(Request $request, ?array $categoryIds = null): array
     {
+        if (! is_null($categoryIds)) {
+            $categoryFilter = $categoryIds;
+        } else {
+            $categoryId = $request->input('category_id');
+
+            if ($categoryId === '' || $categoryId === null) {
+                $categoryFilter = null;
+            } else {
+
+                $category = Category::find($categoryId);
+
+                if ($category) {
+                    $categoryFilter = $category->allCategoryIds();
+                } else {
+                    $categoryFilter = [$categoryId];
+                }
+            }
+        }
+
         return [
             'q' => $request->input('q'),
             'location' => $request->input('location'),
-            'category_id' => $categoryIds,
+            'category_id' => $categoryFilter,
             'price_min' => $request->input('price_min'),
             'price_max' => $request->input('price_max'),
         ];

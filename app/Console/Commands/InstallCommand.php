@@ -16,10 +16,11 @@ class InstallCommand extends Command
         $this->info('🚀 Pokrećem instalaciju aplikacije...');
 
         // Laravel key (samo prvi put)
-        if (! file_exists(storage_path('framework/laravel-exists'))) {
+        if (!file_exists(storage_path('framework/laravel-exists'))) {
             $this->info('🔑 Generišem app key...');
             $this->runProcess('php artisan key:generate');
 
+            // MARKER FAJL — sprečava ponovno pucanje
             file_put_contents(
                 storage_path('framework/laravel-exists'),
                 now()->toDateTimeString()

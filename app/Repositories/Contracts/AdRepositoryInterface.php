@@ -5,6 +5,7 @@ namespace App\Repositories\Contracts;
 use App\Models\Ad;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 interface AdRepositoryInterface
 {
@@ -21,4 +22,6 @@ interface AdRepositoryInterface
     public function update(Ad $ad, array $data): Ad;
 
     public function delete(Ad $ad): bool;
+
+    public function getMoreFromUser(Ad $ad, int $limit = 4): Collection;
 }

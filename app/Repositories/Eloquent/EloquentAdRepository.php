@@ -6,6 +6,7 @@ use App\Models\Ad;
 use App\Models\User;
 use App\Repositories\Contracts\AdRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class EloquentAdRepository implements AdRepositoryInterface
 {
@@ -73,5 +74,15 @@ class EloquentAdRepository implements AdRepositoryInterface
     public function delete(Ad $ad): bool
     {
         return (bool) $ad->delete();
+    }
+
+    public function getMoreFromUser(Ad $ad, int $limit = 4): Collection
+    {
+        return Ad::with('category.parent.parent')
+            ->where('user_id', $ad->user_id)
+            ->where('id', '!=', $ad->id)
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get();
     }
 }

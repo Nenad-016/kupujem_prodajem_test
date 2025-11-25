@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AdReportRequest;
 use App\Http\Requests\AdRequest;
 use App\Models\Ad;
 use App\Models\Category;
@@ -39,14 +40,8 @@ class AdController extends Controller
             }
         }
 
-        $moreFromUser = Ad::query()
-            ->with('category.parent.parent')
-            ->where('user_id', $ad->user_id)
-            ->where('id', '!=', $ad->id)
-            ->orderByDesc('created_at')
-            ->limit(4)
-            ->get();
-
+       $moreFromUser = $this->service->getMoreFromUser($ad);
+       
         return view('ads.show', [
             'ad' => $ad,
             'moreFromUser' => $moreFromUser,
@@ -163,7 +158,7 @@ class AdController extends Controller
         ];
     }
 
-    public function report(Request $request, Ad $ad)
+    public function report(AdReportRequest $request, Ad $ad)
     {
         $request->validate([
             'reason'  => ['required', 'string', 'max:255'],

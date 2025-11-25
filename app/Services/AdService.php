@@ -9,6 +9,7 @@ use App\Repositories\Contracts\AdRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Collection;
 
 class AdService
 {
@@ -67,4 +68,10 @@ class AdService
             $this->ads->delete($ad);
         });
     }
+
+    public function getMoreFromUser(Ad $ad, int $limit = 4): Collection
+    {
+        return $this->ads->getMoreFromUser($ad, $limit);
+    }
+
 }

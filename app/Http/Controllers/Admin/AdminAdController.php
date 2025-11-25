@@ -47,7 +47,7 @@ class AdminAdController extends Controller
         $ad = $this->service->create($data, $image);
 
         return redirect()
-            ->route('ads.edit', $ad)
+            ->route('admin.ads.index', $ad)
             ->with('success', 'Oglas je uspešno kreiran.');
     }
 

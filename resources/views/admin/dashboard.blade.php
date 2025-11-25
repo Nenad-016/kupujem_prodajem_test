@@ -28,12 +28,24 @@
                     Oglasi
                 </a>
             </li>
-            <li>
-                <a href="{{ route('admin.ad_reports.index') }}" class="text-slate-700 hover:text-indigo-600">
-                    Prijave oglasa
+             <li>
+                <a href="{{ route('admin.ad_reports.index') }}"
+                class="flex items-center justify-between text-slate-700 hover:text-indigo-600">
+                    
+                    <span class="font-semibold {{ request()->routeIs('admin.ad_reports.index') ? 'text-indigo-600' : '' }}">
+                        Prijave oglasa
+                    </span>
+
+                    @if(isset($adReportsCount) && $adReportsCount > 0)
+                        <span class="ml-2 inline-flex items-center justify-center
+                                    text-xs font-semibold bg-rose-600 text-white
+                                    rounded-full px-2 py-0.5">
+                            {{ $adReportsCount }}
+                        </span>
+                    @endif
                 </a>
-            </li>
-            <li>
+             </li>
+
                 <a href="{{ route('home') }}" class="text-slate-700 hover:text-indigo-600">
                     ← Nazad na početnu
                 </a>

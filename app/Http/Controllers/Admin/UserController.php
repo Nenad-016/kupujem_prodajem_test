@@ -103,7 +103,6 @@ class UserController extends Controller
             ->latest()
             ->paginate(12);
 
-        // "Primarni" oglas– npr. poslednji koji ima telefon
         $primaryAd = $user->ads()
             ->whereNotNull('phone')
             ->latest()

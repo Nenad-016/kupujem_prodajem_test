@@ -38,7 +38,7 @@ class Category extends Model
     {
         return 'slug';
     }
-   
+
     public function getFullPathAttribute(): string
     {
         $parts = [];

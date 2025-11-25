@@ -74,7 +74,7 @@ class CategoryService
     /**
      * Lista kategorija za <select> parent_id.
      *
-     * @param  \App\Models\Category|null  $except  Kategorija koju treba isključiti (npr. kod edit-a).
+     * @param  \App\Models\Category|null
      */
     public function getAllForParentSelect(?Category $except = null): Collection
     {

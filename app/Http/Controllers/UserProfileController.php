@@ -12,12 +12,11 @@ class UserProfileController extends Controller
      */
     public function show(User $user)
     {
-        // koliko oglasa ima
+
         $adsCount = Ad::query()
             ->where('user_id', $user->id)
             ->count();
 
-        // njegovi oglasi (možeš paginaciju ako hoćeš)
         $ads = Ad::query()
             ->with('category')
             ->where('user_id', $user->id)

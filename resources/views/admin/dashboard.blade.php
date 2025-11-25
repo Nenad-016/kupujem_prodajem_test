@@ -29,6 +29,11 @@
                 </a>
             </li>
             <li>
+                <a href="{{ route('admin.ad_reports.index') }}" class="text-slate-700 hover:text-indigo-600">
+                    Prijave oglasa
+                </a>
+            </li>
+            <li>
                 <a href="{{ route('home') }}" class="text-slate-700 hover:text-indigo-600">
                     ← Nazad na početnu
                 </a>

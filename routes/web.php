@@ -7,8 +7,10 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\Admin\AdminAdReportController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +55,10 @@ Route::middleware('auth')->group(function () {
         Route::put('/ads/{ad}', [AdController::class, 'update'])->name('ads.update');
         Route::delete('/ads/{ad}', [AdController::class, 'destroy'])->name('ads.destroy');
 
+        Route::post('/ads/{ad}/report', [AdController::class, 'report'])
+            ->middleware('auth')
+            ->name('ads.report');
+
     });
 });
 
@@ -60,6 +66,12 @@ Route::prefix('admin')
     ->name('admin.')
     ->middleware(['auth', 'role:admin'])
     ->group(function () {
+
+        Route::get('/ad-reports', [AdminAdReportController::class, 'index'])
+            ->name('ad_reports.index');
+
+        Route::patch('/ad-reports/{report}/status', [AdminAdReportController::class, 'updateStatus'])
+            ->name('ad_reports.updateStatus');
 
         // Admin dashboard – DashboardController
         Route::get('/', [DashboardController::class, 'index'])
@@ -128,6 +140,7 @@ Route::prefix('admin')
         Route::post('/ads/{ad}/restore', [AdminAdController::class, 'restore'])
             ->withTrashed()
             ->name('ads.restore');
+
     });
 
 Route::get('/users/{user}', [UserProfileController::class, 'show'])

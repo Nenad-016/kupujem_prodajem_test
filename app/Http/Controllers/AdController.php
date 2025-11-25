@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AdRequest;
 use App\Models\Ad;
 use App\Models\Category;
-use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Services\AdService;
+use App\Models\AdReport;
+use App\Repositories\Contracts\CategoryRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -160,5 +161,23 @@ class AdController extends Controller
             'price_min' => $request->get('price_min'),
             'price_max' => $request->get('price_max'),
         ];
+    }
+
+    public function report(Request $request, Ad $ad)
+    {
+        $request->validate([
+            'reason'  => ['required', 'string', 'max:255'],
+            'message' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        AdReport::create([
+            'ad_id'   => $ad->id,
+            'user_id' => $request->user()->id,
+            'reason'  => $request->input('reason'),
+            'message' => $request->input('message'),
+            'status'  => 'pending',
+        ]);
+
+        return back()->with('success', 'Hvala, prijava oglasa je sačuvana. Naš tim će je proveriti.');
     }
 }

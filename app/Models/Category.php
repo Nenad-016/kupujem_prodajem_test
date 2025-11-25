@@ -62,4 +62,19 @@ class Category extends Model
 
         return $this->ads()->count();
     }
+
+    public function allCategoryIds(): array
+    {
+        $ids = [$this->id];
+
+        $children = $this->relationLoaded('children')
+            ? $this->children
+            : $this->children()->get();
+
+        foreach ($children as $child) {
+            $ids = array_merge($ids, $child->allCategoryIds());
+        }
+
+        return $ids;
+    }
 }

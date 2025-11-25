@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Process;
 
 class InstallCommand extends Command
 {
-    protected $signature = 'app:install {--fresh : Drop tables before running migrations} {--no-build : Preskoci npm build}';
+    protected $signature = 'app:install {--fresh : Drop tables before running migrations}';
 
     protected $description = 'Priprema aplikaciju nakon composer install-a';
 
@@ -15,10 +15,15 @@ class InstallCommand extends Command
     {
         $this->info('🚀 Pokrećem instalaciju aplikacije...');
 
-        // Laravel key
+        // Laravel key (samo prvi put)
         if (! file_exists(storage_path('framework/laravel-exists'))) {
             $this->info('🔑 Generišem app key...');
             $this->runProcess('php artisan key:generate');
+
+            file_put_contents(
+                storage_path('framework/laravel-exists'),
+                now()->toDateTimeString()
+            );
         }
 
         // Storage link
@@ -34,16 +39,13 @@ class InstallCommand extends Command
             $this->runProcess('php artisan migrate --seed');
         }
 
-        // NPM build
-        if (! $this->option('no-build')) {
-            $this->info('🎨 Radim npm build...');
-            $this->runProcess('npm run build');
-        } else {
-            $this->info('⏭ Preskačem npm build (--no-build)');
-        }
+        // NPM build – ne koristimo Vite
+        $this->info('⏭ Preskačem npm build (Vite se ne koristi u projektu)');
 
+        // Cache & autoload
         $this->info('⚡ Čišćenje keša...');
         $this->runProcess('php artisan optimize:clear');
+        $this->runProcess('composer dump-autoload');
 
         $this->info('🎉 Instalacija završena!');
 
